@@ -81,6 +81,6 @@ INSERT INTO BigOrders
 
 -- C. Return the total Amount of orders for each month, ordered by year, then month (both in
 --  descending order)
-SELECT MONTHNAME(OrderDate), COUNT(*) AS TotalAmountOfOrders
+SELECT YEAR(OrderDate), DATE_FORMAT(OrderDate, '%Y%m'), SUM(NumberOfUnits * CostOfUnit) AS TotalAmountOfOrders
 FROM Orders
-GROUP BY OrderDate
+GROUP BY YEAR(OrderDate), DATE_FORMAT(OrderDate, '%Y%m')
