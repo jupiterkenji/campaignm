@@ -1,0 +1,86 @@
+-- Question 5
+--  A. Return the names of all salespeople that have an order with George
+--  Alice and Bob
+SELECT Salesperson.Name
+    FROM Salesperson
+    INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
+    INNER JOIN Customer ON Customer.CustomerID = Orders.CustomerID
+    WHERE 
+        Customer.Name = 'George';
+
+--B. Return the names of all salespeople that do not have any order with George
+--  Chris, Derek, Emmit, Fred
+SELECT Salesperson.Name
+    FROM Salesperson
+    WHERE SalespersonID NOT IN
+    (
+        SELECT Orders.SalespersonID
+        FROM Orders
+        INNER JOIN Customer ON Customer.CustomerID = Orders.CustomerID
+        WHERE 
+            Customer.Name = 'George'
+    );
+
+--C. Return the names of salespeople that have 2 or more orders.
+-- Alice, Emmit
+SELECT Name
+FROM Salesperson
+WHERE SalespersonID IN (
+    SELECT Salesperson.SalespersonID
+        FROM Salesperson
+        INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
+        GROUP BY Salesperson.SalespersonID
+        HAVING COUNT(Orders.OrderID) > 1
+);
+
+SELECT Name
+FROM
+(
+    SELECT Salesperson.SalespersonID
+        FROM Salesperson
+        INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
+        GROUP BY Salesperson.SalespersonID
+        HAVING COUNT(Orders.OrderID) > 1
+) salespersonWithMoreThan2Orders
+INNER JOIN Salesperson ON Salesperson.SalespersonID = salespersonWithMoreThan2Orders.SalespersonID;
+
+
+
+
+
+
+
+
+
+
+
+-- Questin 6
+-- A. Return the name of the salesperson with the 3rd highest salary.
+SELECT Name
+FROM
+(
+    SELECT Name, RANK() OVER (ORDER BY Salary DESC) RN
+    FROM Salesperson
+) SalaryRank
+WHERE SalaryRank.RN = 3;
+
+
+-- B. Create a new roll­up table BigOrders(where columns are CustomerID,
+--  TotalOrderValue), and insert into that table customers whose total Amount across all
+--  orders is greater than 1000
+-- TRUNCATE TABLE BigOrders 
+INSERT INTO BigOrders
+    SELECT CustomerID, Total
+    FROM
+    (
+        SELECT CustomerID, NumberOfUnits * CostOfUnit AS Total
+        FROM Orders
+    ) TotalOrder
+    WHERE Total > 1000;
+
+
+-- C. Return the total Amount of orders for each month, ordered by year, then month (both in
+--  descending order)
+SELECT MONTHNAME(OrderDate), COUNT(*) AS TotalAmountOfOrders
+FROM Orders
+GROUP BY OrderDate
