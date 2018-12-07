@@ -10,10 +10,10 @@ namespace test
         [Fact]
         public void IsNullOrEmptyTest()
         {
-            Assert.Equal(true, Utilities.IsNullOrEmpty(null));
-            Assert.Equal(false, Utilities.IsNullOrEmpty("a"));
-            Assert.Equal(true, Utilities.IsNullOrEmpty(""));
-            Assert.Equal(false, Utilities.IsNullOrEmpty("null"));
+            Assert.True(Utilities.IsNullOrEmpty(null));
+            Assert.False(Utilities.IsNullOrEmpty("a"));
+            Assert.True(Utilities.IsNullOrEmpty(""));
+            Assert.False(Utilities.IsNullOrEmpty("null"));
         }
 
         [Fact]
@@ -51,5 +51,41 @@ namespace test
             Assert.Equal(new[] {1}, Utilities.GetMostCommon(new[] {1, 2, 3, 4, 5, 1, 6, 7}));
             Assert.Equal(new[] {1, 2, 3, 4, 5, 6, 7}, Utilities.GetMostCommon(new[] {1, 2, 3, 4, 5, 6, 7}));
         }
+
+        [Fact]
+        public void LinkCheckerTest()
+        {
+            var linkStatus = LinkChecker.GetLinkStatus(html);
+
+            var expected = new[] {
+                new LinkStatus("https://www.bing.com", isValid: true),
+                new LinkStatus("https://www.microsoft.com", isValid: true),
+                new LinkStatus("https://www.Idontexist.com", isValid: false)
+            };
+            Assert.Equal(expected.OrderBy(a => a.Url), linkStatus.OrderBy(a => a.Url));
+
+            //check use cache //jk-todo
+        }
+
+        string html = @"<!DOCTYPE html> 
+<html> 
+<head> 
+    <meta charset=""utf-8"" /> 
+    <meta http-equiv=""content-type"" content=""text/html;charset=utf-8""> 
+ 
+    <title></title> 
+</head> 
+<body> 
+    <h1>Hello world</h1> 
+    <div> 
+        <a href=""https://www.bing.com"">bing search</a> <br>
+        <a href=""https://www.microsoft.com"">microsoft home page</a>  <br><hr /> 
+        <a href=""https://www.Idontexist.com"">I don't exist website</a>  <br><hr /> 
+ 
+        <input type=""text"" calss=""misshapenTag""> 
+        <img class=""misshapenTag""> 
+    </div> 
+</body> 
+</html>";
     }
 }
