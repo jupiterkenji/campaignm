@@ -1,3 +1,6 @@
+-- Version of SQL server:
+--  Server version: 8.0.13 MySQL Community Server - GPL
+
 -- Question 5
 --  A. Return the names of all salespeople that have an order with George
 --  Alice and Bob
