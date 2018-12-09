@@ -13,12 +13,14 @@ namespace campaignmonitor
         public static IEnumerable<LinkStatus> GetLinkStatus(string html)
         {
             var result = new ConcurrentBag<LinkStatus>();
+
             var urls = FindUrls(html);
             var cache = new ConcurrentDictionary<string, bool>();
 
             Parallel.ForEach(urls, (url) =>
             {
-                if (!cache.TryGetValue(url, out _))
+                var isFoundInCache = cache.TryGetValue(url, out _);
+                if (!isFoundInCache)
                 {
                     cache[url] = IsUrlValid(url);
                 }
@@ -31,20 +33,18 @@ namespace campaignmonitor
 
         static IEnumerable<string> FindUrls(string html)
         {
-            var result = new List<string>();
-
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
             var links = htmlDoc.DocumentNode.SelectNodes("//a[@href]");
 
-            foreach (var link in links)
+            if (links != null)
             {
-                //result.Add(link.InnerHtml);
-                result.Add(link.Attributes["href"].Value);
+                foreach (var link in links)
+                {
+                    yield return link.Attributes["href"].Value;
+                }
             }
-
-            return result;
         }
 
         static bool IsUrlValid(string url)
