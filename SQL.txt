@@ -1,5 +1,9 @@
+------------------------------------------------------------------------------------------------------------------------
+-- Note:
+------------------------------------------------------------------------------------------------------------------------
 -- Version of SQL server:
---  Server version: 8.0.13 MySQL Community Server - GPL
+    Server version: 8.0.13 MySQL Community Server - GPL
+-- Improvement can be done further by analysing execution plans which I didn't do
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Question 5
@@ -55,7 +59,6 @@ WHERE SalaryRank.RN = 3;
 -- B. Create a new roll­up table BigOrders(where columns are CustomerID,
 --  TotalOrderValue), and insert into that table customers whose total Amount across all
 --  orders is greater than 1000
-TRUNCATE TABLE BigOrders; --JK-TODO
 INSERT INTO BigOrders
     SELECT CustomerID, SUM(TotalOrderValue) AS TotalOrderValue
     FROM
