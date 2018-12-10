@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var arrangeBy = require('../arrangeBy');
 
 describe('arrangeBy()', function() {
-    it ('should arrangeBy', function() {
+    it ('Given arrangeBy "name" THEN record with same "name" should be merged', function() {
 
         const input = [{
             id: 1,
@@ -34,13 +34,6 @@ describe('arrangeBy()', function() {
         const arrangeByName = arrangeBy('name')
         var output = arrangeByName(input)
 
-        // console.log('\r\noutput: \r\n')
-        // console.log(output);
-        // console.log('\r\n---------------------------------\r\n')
-        // console.log('\r\expectedOutput: \r\n')
-        // console.log(expectedOutput);
-
-        //expect(output).to.be.equal(expectedOutput);
         expect(output).to.deep.equal(expectedOutput);
     })
 });

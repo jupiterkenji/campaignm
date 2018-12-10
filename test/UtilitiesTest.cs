@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
 using campaignmonitor;
+using Moq;
+using Moq.Protected;
 using Xunit;
 
 namespace test
 {
-    public class Test
+    public class UtilitiesTest
     {
         [Fact]
         public void IsNullOrEmptyTest()
@@ -75,79 +77,6 @@ namespace test
             Assert.Equal(new[] {1, 2, 3, 4, 5, 6, 7}, Utilities.GetMostCommon(new[] {1, 2, 3, 4, 5, 6, 7}));
 
             Assert.Equal(new[] {-5, -4}, Utilities.GetMostCommon(new[] {-5, -4, -3, 2, -4, -5}).OrderBy(x => x));
-        }
-
-        [Fact]
-        public void LinkCheckerTest()
-        {
-            var linkStatus = LinkChecker.GetLinkStatus(linkCheckerTestHtml);
-
-            var expected = new[] {
-                new LinkStatus("https://www.bing.com", isValid: true),
-                new LinkStatus("https://www.microsoft.com", isValid: true),
-                new LinkStatus("https://www.Idontexist.com", isValid: false)
-            };
-            Assert.Equal(expected.OrderBy(a => a.Url), linkStatus.OrderBy(a => a.Url));
-        }
-
-        string linkCheckerTestHtml = @"<!DOCTYPE html> 
-<html> 
-<head> 
-    <meta charset=""utf-8"" /> 
-    <meta http-equiv=""content-type"" content=""text/html;charset=utf-8"">
-    <title></title> 
-</head> 
-<body> 
-    <h1>Hello world</h1> 
-    <div> 
-        <a href=""https://www.bing.com"">bing search</a> <br>
-        <a href=""https://www.microsoft.com"">microsoft home page</a>  <br><hr /> 
-        <a href=""https://www.Idontexist.com"">I don't exist website</a>  <br><hr /> 
- 
-        <input type=""text"" calss=""misshapenTag""> 
-        <img class=""misshapenTag""> 
-    </div> 
-</body> 
-</html>";
-
-        [Fact]
-        public void LinkCheckerNoLinksTest()
-        {
-            var linkStatus = LinkChecker.GetLinkStatus(string.Empty);
-            Assert.Equal(Enumerable.Empty<LinkStatus>(), linkStatus);
-        }
-
-        [Fact]
-        public void LinkCheckerInvalidLinksTest()
-        {
-            var linkStatus = LinkChecker.GetLinkStatus(LinkCheckerTestInvalidLinksHtml);
-
-            var expected = new[] {
-                new LinkStatus("ThisIsInvalidUrl", isValid: false),
-                new LinkStatus("This Is Invalid Url", isValid: false),
-                new LinkStatus("abcde://ThisIsInvalidUrl.com", isValid: false)
-            };
-            Assert.Equal(expected.OrderBy(a => a.Url), linkStatus.OrderBy(a => a.Url));
-        }
-
-        string LinkCheckerTestInvalidLinksHtml = @"<!DOCTYPE html> 
-<html> 
-<head> 
-    <title></title> 
-</head> 
-<body> 
-    <div> 
-        <a href=""ThisIsInvalidUrl"">This is Invalid Url (without space)</a> <br>
-        <a href=""This Is Invalid Url"">This is Invalid Url (with space)</a>  <br><hr /> 
-        <a href=""abcde://ThisIsInvalidUrl.com"">This is Invalid Url (with symbols)</a>  <br><hr /> 
-    </div> 
-</body> 
-</html>";
-
-        [Fact]
-        public void LinkCheckerCacheTest()
-        {
-            //jk-todo
         }
     }
 }

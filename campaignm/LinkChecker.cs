@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -10,17 +12,17 @@ namespace campaignmonitor
 {
     public class LinkChecker
     {
-        public static IEnumerable<LinkStatus> GetLinkStatus(string html)
+        public IEnumerable<LinkStatus> GetLinkStatus(string html)
         {
             var result = new ConcurrentBag<LinkStatus>();
 
-            var urls = FindUrls(html);
+            var urls = FindUrls(html).Distinct();
             var cache = new ConcurrentDictionary<string, bool>();
 
             Parallel.ForEach(urls, (url) =>
             {
-                var isFoundInCache = cache.TryGetValue(url, out _);
-                if (!isFoundInCache)
+                var isCached = cache.TryGetValue(url, out _);
+                if (!isCached)
                 {
                     cache[url] = IsUrlValid(url);
                 }
@@ -47,27 +49,29 @@ namespace campaignmonitor
             }
         }
 
-        static bool IsUrlValid(string url)
+        protected virtual bool IsUrlValid(string url)
         {
-            var result = false;
-
-            Uri uriResult;
-
-            if (Uri.TryCreate(url, UriKind.Absolute, out uriResult))
+            try
             {
-                result = uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
+                using (var client = new HttpClient())
+                using (var response = client.GetAsync(url).Result)
+                {
+                    return response.IsSuccessStatusCode;
+                }
             }
+            catch {}
 
-            return result;
+            return false;
         }
     }
+
 
     public class LinkStatus : IEquatable<LinkStatus> 
     {
         public LinkStatus(string url, bool isValid)
         {
             Url = url;
-            IsValid = IsValid; 
+            IsValid = isValid; 
         }
 
         public string Url {get; private set;}
