@@ -21,6 +21,14 @@ To run test, go to test folder and run
 To run Javascript test, go to campaignmjs folder and run
 > npm test
 
+Toubleshoot:
+> If it complains about 'The current .NET SDK does not support targeting .Net Core 2.1 ...', 
+	you can update dotnet-core https://dotnet.microsoft.com/download/dotnet-core/2.1#sdk-2.1.300-preview2
+
+I have tested the solution on both:
+> Visual Studio Code 1.29.1 on Ubuntu
+> Visual Studio Community Version 7.7.1 (build 15) on Mac
+
 Question 1-4
 ------------
 Code: campaignm > Utilities.cs
