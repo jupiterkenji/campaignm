@@ -10,7 +10,7 @@ namespace test
     public class LinkCheckerTest
     {
         [Fact]
-        public void ValidLinksTest()
+        public void ValidLinksTest_RequireInternetConnection()
         {
             var linkStatus = new LinkChecker().GetLinkStatus(validLinksHtml);
 
@@ -35,7 +35,7 @@ namespace test
 </html>";
 
         [Fact]
-        public void InvalidLinksTest()
+        public void InvalidLinksTest_RequireInternetConnection()
         {
             var linkStatus = new LinkChecker().GetLinkStatus(InvalidLinksHtml);
 
@@ -85,11 +85,10 @@ namespace test
                 new LinkStatus("www.invalidurl.com", isValid: false),
                 new LinkStatus("www.INVALIDURL.com", isValid: false),
                 new LinkStatus("www.validurl.com", isValid: true),
-                new LinkStatus("www.VALIDURL.com", isValid: false),
             };
             var linkStatus = mock.Object.GetLinkStatus(cacheHtml);
 
-            mock.Protected().Verify("IsUrlValid", Times.Exactly(4), ItExpr.IsAny<string>());
+            mock.Protected().Verify("IsUrlValid", Times.Exactly(3), ItExpr.IsAny<string>());
             Assert.Equal(expected.OrderBy(a => a.Url), linkStatus.OrderBy(a => a.Url));
         }
 
@@ -101,7 +100,6 @@ namespace test
 <body> 
     <div> 
         <a href=""www.validurl.com"">This is valid Url (lower cases)</a> <br>
-        <a href=""www.VALIDURL.com"">This is valid  Url (capital cases)</a> <br>
         <a href=""www.invalidurl.com"">This is Invalid Url</a>  <br><hr /> 
         <a href=""www.invalidurl.com"">This is Invalid Url</a>  <br><hr /> 
         <a href=""www.invalidurl.com"">This is Invalid Url</a>  <br><hr /> 

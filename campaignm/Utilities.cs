@@ -22,7 +22,7 @@ namespace campaignmonitor
         // This function is more complicated than simply checking '(number % i) == 0'
         //  because of performance reason i.e. cut the run time to less than O(n)
         //  the idea is when 'number % i == 0', we found 2 divisors 
-        //  so we don't have to iterate all number untill n
+        //  so we don't have to iterate all number
         //  For number=60, instead of having 60 iterations, we just have 8 iterations 
         static IEnumerable<int> GetPositiveDivisorCore(int number)
         {

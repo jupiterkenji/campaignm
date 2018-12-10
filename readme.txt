@@ -12,6 +12,15 @@ Visual Studio Code Version:
 	Architecture: x64
 SQL server Version: Server version: 8.0.13 MySQL Community Server - GPL
 
+To run the program, go to campaignm folder and run
+> dotnet run
+
+To run test, go to test folder and run
+> dotnet test
+
+To run Javascript test, go to campaignmjs folder and run
+> npm test
+
 Question 1-4
 ------------
 Code: campaignm > Utilities.cs

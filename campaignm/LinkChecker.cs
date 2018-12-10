@@ -17,17 +17,10 @@ namespace campaignmonitor
             var result = new ConcurrentBag<LinkStatus>();
 
             var urls = FindUrls(html).Distinct();
-            var cache = new ConcurrentDictionary<string, bool>();
 
             Parallel.ForEach(urls, (url) =>
             {
-                var isCached = cache.TryGetValue(url, out _);
-                if (!isCached)
-                {
-                    cache[url] = IsUrlValid(url);
-                }
-
-                result.Add(new LinkStatus(url, cache[url]));
+                result.Add(new LinkStatus(url, IsUrlValid(url)));
             });
 
             return result;

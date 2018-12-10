@@ -48,17 +48,19 @@ SELECT Name
 -- Question 6
 ------------------------------------------------------------------------------------------------------------------------
 -- A. Return the name of the salesperson with the 3rd highest salary.
+-- Derek
 SELECT Name
-FROM
-(
-    SELECT Name, RANK() OVER (ORDER BY Salary DESC) RN
-    FROM Salesperson
-) SalaryRank
-WHERE SalaryRank.RN = 3;
+    FROM
+    (
+        SELECT Name, RANK() OVER (ORDER BY Salary DESC) RN
+        FROM Salesperson
+    ) SalaryRank
+    WHERE SalaryRank.RN = 3;
 
 -- B. Create a new roll­up table BigOrders(where columns are CustomerID,
 --  TotalOrderValue), and insert into that table customers whose total Amount across all
 --  orders is greater than 1000
+-- George, Harry, Jerry
 INSERT INTO BigOrders
     SELECT CustomerID, SUM(TotalOrderValue) AS TotalOrderValue
     FROM
@@ -75,4 +77,4 @@ INSERT INTO BigOrders
 SELECT YEAR(OrderDate) AS Year, MONTH(OrderDate) AS Month, SUM(NumberOfUnits * CostOfUnit) AS TotalAmountOfOrders
     FROM Orders
     GROUP BY YEAR(OrderDate), MONTH(OrderDate)
-    ORDER BY YEAR(OrderDate) DESC, MONTH(OrderDate) DESC
+    ORDER BY YEAR(OrderDate) DESC, MONTH(OrderDate) DESC;
