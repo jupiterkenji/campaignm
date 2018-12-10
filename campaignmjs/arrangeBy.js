@@ -3,14 +3,20 @@ function arrangeBy(keyName) {
         var result = {};
 
         input.forEach(function(data, index){
-            var keyValue = data[keyName];
-            if (keyValue in result)
+            if (keyName in data)
             {
-                result[keyValue].push(data);
-            }
-            else
-            {
-                result[keyValue] = [data];
+                var keyValue = data[keyName];
+                if (keyValue != null)
+                {
+                    if (keyValue in result)
+                    {
+                        result[keyValue].push(data);
+                    }
+                    else
+                    {
+                        result[keyValue] = [data];
+                    }
+                }
             }
         });
 

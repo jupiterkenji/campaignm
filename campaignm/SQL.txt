@@ -1,7 +1,9 @@
 -- Version of SQL server:
 --  Server version: 8.0.13 MySQL Community Server - GPL
 
+------------------------------------------------------------------------------------------------------------------------
 -- Question 5
+------------------------------------------------------------------------------------------------------------------------
 --  A. Return the names of all salespeople that have an order with George
 --  Alice and Bob
 SELECT Salesperson.Name
@@ -12,52 +14,35 @@ SELECT Salesperson.Name
         Customer.Name = 'George';
 
 --B. Return the names of all salespeople that do not have any order with George
---  Chris, Derek, Emmit, Fred
+-- Chris, Derek, Emmit, Fred
 SELECT Salesperson.Name
     FROM Salesperson
-    WHERE SalespersonID NOT IN
+    WHERE NOT EXISTS
     (
         SELECT Orders.SalespersonID
         FROM Orders
         INNER JOIN Customer ON Customer.CustomerID = Orders.CustomerID
         WHERE 
             Customer.Name = 'George'
+			AND Orders.SalespersonID = Salesperson.SalespersonID 
     );
-
+    
 --C. Return the names of salespeople that have 2 or more orders.
 -- Alice, Emmit
 SELECT Name
-FROM Salesperson
-WHERE SalespersonID IN (
-    SELECT Salesperson.SalespersonID
-        FROM Salesperson
-        INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
-        GROUP BY Salesperson.SalespersonID
-        HAVING COUNT(Orders.OrderID) > 1
-);
+    FROM
+    (
+        SELECT Salesperson.SalespersonID
+            FROM Salesperson
+            INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
+            GROUP BY Salesperson.SalespersonID
+            HAVING COUNT(Orders.OrderID) > 1
+    ) salespersonWithMoreThan2Orders
+    INNER JOIN Salesperson ON Salesperson.SalespersonID = salespersonWithMoreThan2Orders.SalespersonID;
 
-SELECT Name
-FROM
-(
-    SELECT Salesperson.SalespersonID
-        FROM Salesperson
-        INNER JOIN Orders ON Orders.SalespersonID = Salesperson.SalespersonID
-        GROUP BY Salesperson.SalespersonID
-        HAVING COUNT(Orders.OrderID) > 1
-) salespersonWithMoreThan2Orders
-INNER JOIN Salesperson ON Salesperson.SalespersonID = salespersonWithMoreThan2Orders.SalespersonID;
-
-
-
-
-
-
-
-
-
-
-
--- Questin 6
+------------------------------------------------------------------------------------------------------------------------
+-- Question 6
+------------------------------------------------------------------------------------------------------------------------
 -- A. Return the name of the salesperson with the 3rd highest salary.
 SELECT Name
 FROM
@@ -67,23 +52,24 @@ FROM
 ) SalaryRank
 WHERE SalaryRank.RN = 3;
 
-
 -- B. Create a new roll­up table BigOrders(where columns are CustomerID,
 --  TotalOrderValue), and insert into that table customers whose total Amount across all
 --  orders is greater than 1000
--- TRUNCATE TABLE BigOrders 
+TRUNCATE TABLE BigOrders; --JK-TODO
 INSERT INTO BigOrders
-    SELECT CustomerID, Total
+    SELECT CustomerID, SUM(TotalOrderValue) AS TotalOrderValue
     FROM
     (
-        SELECT CustomerID, NumberOfUnits * CostOfUnit AS Total
+        SELECT CustomerID, SUM(NumberOfUnits * CostOfUnit) AS TotalOrderValue
         FROM Orders
-    ) TotalOrder
-    WHERE Total > 1000;
-
+		GROUP BY CustomerID
+        HAVING SUM(NumberOfUnits * CostOfUnit)  > 1000
+    ) CustomerAndTotalOrderValue
+	GROUP BY CustomerID WITH ROLLUP;
 
 -- C. Return the total Amount of orders for each month, ordered by year, then month (both in
 --  descending order)
-SELECT YEAR(OrderDate), DATE_FORMAT(OrderDate, '%Y%m'), SUM(NumberOfUnits * CostOfUnit) AS TotalAmountOfOrders
-FROM Orders
-GROUP BY YEAR(OrderDate), DATE_FORMAT(OrderDate, '%Y%m')
+SELECT YEAR(OrderDate) AS Year, MONTH(OrderDate) AS Month, SUM(NumberOfUnits * CostOfUnit) AS TotalAmountOfOrders
+    FROM Orders
+    GROUP BY YEAR(OrderDate), MONTH(OrderDate)
+    ORDER BY YEAR(OrderDate) DESC, MONTH(OrderDate) DESC

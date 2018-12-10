@@ -34,7 +34,7 @@ namespace test
 </body> 
 </html>";
 
-[Fact]
+        [Fact]
         public void InvalidLinksTest()
         {
             var linkStatus = new LinkChecker().GetLinkStatus(InvalidLinksHtml);
